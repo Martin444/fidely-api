@@ -64,6 +64,14 @@ export class UserService {
 
   async update(id: string, changes: UpdateUserDto) {
     const user = await this.userRepo.findOne({ where: { id } });
+    console.log(user);
+    if (!user) {
+      throw new NotFoundException(`User #${id} not found`);
+    }
+    if (changes.password) {
+      const passhash = await bcrypt.hash(changes.password, 10);
+      user.password = passhash;
+    }
     this.userRepo.merge(user, changes);
     return this.userRepo.save(user);
   }

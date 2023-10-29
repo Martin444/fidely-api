@@ -2,12 +2,13 @@ import {
   Controller,
   Get,
   Body,
-  Patch,
   Param,
   Delete,
   Req,
   UseGuards,
   Post,
+  InternalServerErrorException,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -47,9 +48,16 @@ export class UserController {
   //   return this.passService.changePassword(recoveryInfo);
   // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  @UseGuards(JwtAuthGuard)
+  @Patch('/update/:id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    try {
+      return await this.userService.update(id, updateUserDto);
+    } catch (error) {
+      // Handle the error here
+      console.error(error);
+      throw new InternalServerErrorException('Failed to update user');
+    }
   }
 
   @Delete(':id')
