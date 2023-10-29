@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -25,9 +30,7 @@ export class AuthService {
         throw new UnauthorizedException('Contraseña no válida');
       }
     } else {
-      throw new UnauthorizedException(
-        'No se encontró un usuario con este email',
-      );
+      throw new NotFoundException('No se encontró un usuario con este email');
     }
   }
 
@@ -51,7 +54,7 @@ export class AuthService {
         access_token: this.jwtService.sign(payload),
       };
     } catch (error) {
-      throw new UnauthorizedException(error.message);
+      throw new HttpException(error.message, error.status);
     }
   }
 

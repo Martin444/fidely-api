@@ -1,4 +1,9 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './dto/create-user.dto';
@@ -12,6 +17,12 @@ export class UserService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
   async create(data: CreateUserDto) {
+    if (data.email.length == 0) {
+      throw new HttpException(
+        'Verifica que sea un email válido',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const newUser = this.userRepo.create(data);
 
     const userCreate = await this.userRepo.findOne({
@@ -19,7 +30,10 @@ export class UserService {
     });
 
     if (userCreate) {
-      throw new HttpException('Este usario ya se registró', 301);
+      throw new HttpException(
+        'Este usario ya se registró',
+        HttpStatus.CONFLICT,
+      );
     }
     const passhash = await bcrypt.hash(newUser.password, 10);
     newUser.password = passhash;

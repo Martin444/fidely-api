@@ -5,7 +5,6 @@ import {
   Length,
   IsPositive,
   IsOptional,
-  IsArray,
 } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
 
@@ -16,11 +15,13 @@ export class CreateUserDto {
   readonly id: string;
 
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({ description: 'photoUrl of user' })
   readonly photoURL: string;
 
   @IsString()
   @IsEmail()
+  @IsNotEmpty()
   @ApiProperty({ description: 'the email of user' })
   readonly email: string;
 
@@ -40,6 +41,7 @@ export class CreateUserDto {
   readonly password: string;
 
   @IsNotEmpty()
+  @ApiProperty({ description: 'Roles of user: customer, admin, pro' })
   readonly role: string;
 
   @IsOptional()
