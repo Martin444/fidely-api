@@ -8,16 +8,17 @@ import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { CommercesService } from 'src/commerces/commerces.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UserService,
+    private commerceServices: CommercesService,
     private jwtService: JwtService,
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
-    console.log(email);
     const user = await this.usersService.findByEmail(email);
     if (user) {
       const isMatch = await bcrypt.compare(pass, user.password);
@@ -35,11 +36,24 @@ export class AuthService {
   }
 
   async login(user: any) {
-    console.log(user['user']);
-
-    const payload = { username: user['user']['role'], sub: user['user']['id'] };
+    let neededCommerce = true;
+    const payload = {
+      username: user['user']['role'],
+      sub: user['user']['id'],
+    };
+    try {
+      const comerceOfUser = await this.commerceServices.findByUser(
+        user['user']['id'],
+      );
+      if (comerceOfUser != null) {
+        neededCommerce = false;
+      }
+    } catch (error) {
+      neededCommerce = true;
+    }
     return {
       access_token: this.jwtService.sign(payload),
+      needCommerce: neededCommerce,
     };
   }
 

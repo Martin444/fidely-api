@@ -7,10 +7,12 @@ import config from 'src/config';
 import { ConfigType } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
+import { CommercesModule } from 'src/commerces/commerces.module';
 
 @Module({
   imports: [
     UserModule,
+    CommercesModule,
     JwtModule.registerAsync({
       inject: [config.KEY],
       useFactory: (configService: ConfigType<typeof config>) => {

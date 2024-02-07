@@ -39,6 +39,14 @@ export class CommercesService {
     return comerce;
   }
 
+  async findByUser(id: string) {
+    const comerce = await this.commerceRepo.findOne({ where: { ownerID: id } });
+    if (!comerce) {
+      throw new NotFoundException(`Commerce #${id} not found`);
+    }
+    return comerce;
+  }
+
   async update(id: string, updateCommerceDto: UpdateCommercesDto) {
     const idComerce = updateCommerceDto.id;
     const comerce = await this.commerceRepo.findOne({
