@@ -5,6 +5,7 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { AuthService } from '../services/auth.service';
 // import { LocalAuthGuard } from './local-auth.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../guards/jwt.auth.gards';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -22,6 +23,12 @@ export class AuthController {
   async register(@Body() payload: CreateUserDto) {
     console.log(payload);
     return this.authService.registerUser(payload);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/create/client')
+  async registerClient(@Req() req: Request, @Body() client: CreateUserDto) {
+    return this.authService.registerClient(client, req['user']['userId']);
   }
 
   @Post('/social')

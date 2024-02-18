@@ -30,13 +30,12 @@ export class UserController {
     console.log(req['user']['userId']);
     return this.userService.findOne(req['user']['userId']);
   }
-
   @Post('admin/:email')
   async getAdminUseremail(@Param('email') email: string) {
     return this.userService.getadminUser(email);
   }
 
-  //TODO:implemetar recuperar contraseña;
+  // TODO:implemetar recuperar contraseña;
 
   // @Post('password')
   // async recoveryPassword(@Body() recoveryInfo: RecoveryPasswordDto) {

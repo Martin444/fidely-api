@@ -72,6 +72,20 @@ export class AuthService {
     }
   }
 
+  async registerClient(userData: CreateUserDto, ownerId: string) {
+    try {
+      const userClientCreated = await this.usersService.create(userData);
+      const commerceOfOwn = await this.commerceServices.addClient(
+        ownerId,
+        userClientCreated.id,
+      );
+
+      return commerceOfOwn;
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   async loginSocial(userData: CreateUserDto) {
     return this.usersService
       .findOne(userData.id)

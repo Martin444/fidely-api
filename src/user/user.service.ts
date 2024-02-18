@@ -30,10 +30,14 @@ export class UserService {
     });
 
     if (userCreate) {
-      throw new HttpException(
-        'Este usario ya se registró',
-        HttpStatus.CONFLICT,
-      );
+      if (data.role == 'client') {
+        return userCreate;
+      } else {
+        throw new HttpException(
+          'Este usario ya se registró',
+          HttpStatus.CONFLICT,
+        );
+      }
     }
     const passhash = await bcrypt.hash(newUser.password, 10);
     newUser.password = passhash;
