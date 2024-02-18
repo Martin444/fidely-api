@@ -44,6 +44,12 @@ export class CommercesController {
     const userId = req['user']['userId'];
     return this.commercesService.update(userId, updateCommerceDto);
   }
+  @UseGuards(JwtAuthGuard)
+  @Get('/clients/list')
+  getMyClients(@Req() req: Request) {
+    const userId = req['user']['userId'];
+    return this.commercesService.getClientsByOwner(userId);
+  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

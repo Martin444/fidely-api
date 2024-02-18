@@ -13,12 +13,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Commerce } from './entities/commerce.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { ClientUser } from './entities/client.entity';
+import { UserService } from 'src/user/user.service';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class CommercesService {
   constructor(
     @InjectRepository(Commerce) private commerceRepo: Repository<Commerce>,
     @InjectRepository(ClientUser) private clientRepo: Repository<ClientUser>,
+    private userServices: UserService,
   ) {}
   create(userId: string, createCommerceDto: CreateCommercesDto) {
     try {
@@ -63,8 +66,6 @@ export class CommercesService {
         });
 
         if (clientListExist) {
-          console.log(clientListExist.clientsIdList);
-          console.log(clientID);
           if (clientListExist.clientsIdList.includes(clientID)) {
             throw new HttpException(
               'El usuario ya es parte de tus clientes.',
@@ -75,8 +76,7 @@ export class CommercesService {
           const newClient = clientListExist;
 
           newClient.clientsIdList.push(clientID);
-          console.log(clientListExist);
-          console.log(newClient);
+
           const loadUpdateClient = this.clientRepo.merge(
             clientListExist,
             newClient,
@@ -94,6 +94,47 @@ export class CommercesService {
         }
       }
     } catch (error) {
+      throw error;
+    }
+  }
+
+  async getClientsByOwner(ownerID: string) {
+    const commerceMyList = await this.findByUser(ownerID);
+    if (commerceMyList) {
+      const clientListExist = await this.clientRepo.findOne({
+        where: { ownerCommerce: commerceMyList.id },
+      });
+
+      if (!clientListExist) {
+        throw new HttpException(
+          'No tiene clientes registrados.',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const listUsers = await this.getUserByClientsIDlist(
+        clientListExist.clientsIdList,
+      );
+      return listUsers;
+    }
+  }
+
+  async getUserByClientsIDlist(list: string[]): Promise<any[]> {
+    const listUser = [];
+
+    try {
+      // Itera sobre cada ID en la lista y busca el usuario correspondiente.
+      for (const clientId of list) {
+        const user = await this.userServices.findOne(clientId);
+        if (user) {
+          listUser.push(user);
+        }
+      }
+
+      return listUser;
+    } catch (error) {
+      // Maneja cualquier error que pueda ocurrir durante la búsqueda.
+      console.error('Error al obtener usuarios:', error);
       throw error;
     }
   }
