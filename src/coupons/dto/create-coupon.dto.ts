@@ -2,24 +2,18 @@ import {
   IsString,
   IsNotEmpty,
   IsEmail,
-  Length,
   IsOptional,
-  IsBoolean,
   IsDate,
+  IsNumber,
+  IsArray,
 } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
 
 export class CreateCouponDto {
   @IsString()
-  @IsOptional()
-  @ApiProperty({ description: 'photoUrl of user' })
-  readonly id: string;
-
-  @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'photoUrl of user',
+    description: 'photoPromo',
     default:
       'http://res.cloudinary.com/photographer/image/upload/v1698582410/scublm1dh1gpakjohaop.jpg',
   })
@@ -29,59 +23,72 @@ export class CreateCouponDto {
   @IsEmail()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'the email of user',
-    default: 'example@example.com',
+    description: 'owner of commerce',
+    default: '#',
   })
-  readonly email: string;
-
-  @IsBoolean()
-  @Exclude()
-  @ApiProperty({ description: 'Validate if is verify user', default: false })
-  readonly emailValidate: boolean;
+  readonly ownerCommerceID: string;
 
   @IsString()
   @IsEmail()
-  @ApiProperty({ description: 'the name of user' })
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'title of cupon',
+    default: 'Cupon descount',
+  })
+  readonly title: string;
+
+  @IsString()
+  @IsEmail()
+  @ApiProperty({ description: 'description and objetive of cupon' })
   readonly description: string;
 
   @IsString()
   @IsEmail()
-  @ApiProperty({ description: 'id of category' })
-  readonly categoryId: string;
+  @ApiProperty({ description: 'type: discount, gift' })
+  readonly type: string;
 
-  @IsString()
+  @IsNumber()
   @IsEmail()
-  @ApiProperty({ description: 'the name of user' })
-  readonly title: string;
+  @ApiProperty({
+    description: 'percentage of discount',
+    nullable: true,
+    type: Number,
+  })
+  readonly percentage: number;
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  @ApiProperty({ description: 'web site', default: 'webcomerce.com.ar' })
-  readonly web: string;
-
-  @IsString()
-  @ApiProperty({
-    description: 'Authenticate commerce',
-    default: 'URl de Algun archivo legal',
-  })
-  readonly validateFile: string;
-
-  @IsString()
-  @ApiProperty({ description: 'the number phone', default: '+244423423432' })
-  readonly phone: string;
-
-  @IsNotEmpty()
-  @ApiProperty({
-    description: 'Types of commerces: food, shoes, tecnology, beauty, home',
-    default: 'food',
-  })
-  readonly businessType: string;
+  @ApiProperty({ description: 'web site1', type: Number })
+  readonly amount: number;
 
   @IsDate()
   @ApiProperty({
-    description: 'date avilable',
+    description: 'Date expiration of cupon',
+    nullable: false,
   })
-  dateExpiration: Date;
+  readonly expiryDate: Date;
+
+  @IsNumber()
+  @ApiProperty({ description: 'min buy', type: Number })
+  readonly minPurchaseAmount: number;
+
+  @IsNumber()
+  @ApiProperty({ description: 'max usage', type: Number })
+  readonly maxUsageCount: number;
+
+  @IsArray()
+  @ApiProperty({
+    description: 'The owner defines the products to which this coupon applies',
+    isArray: true,
+  })
+  readonly applicableProducts: [];
+
+  @IsArray()
+  @ApiProperty({
+    description: 'The owner defines the products to which this coupon applies',
+    isArray: true,
+  })
+  readonly eligibleUsers: [];
 }
 
 export class UpdateCouponDto extends PartialType(CreateCouponDto) {}

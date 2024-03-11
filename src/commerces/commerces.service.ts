@@ -14,13 +14,16 @@ import { Commerce } from './entities/commerce.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { ClientUser } from './entities/client.entity';
 import { UserService } from 'src/user/user.service';
-import { User } from 'src/user/entities/user.entity';
+import { CreatePurchaseDto } from './dto/create_purchase.dto';
+import { PurchaseClientUser } from './entities/purchase.entity';
 
 @Injectable()
 export class CommercesService {
   constructor(
     @InjectRepository(Commerce) private commerceRepo: Repository<Commerce>,
     @InjectRepository(ClientUser) private clientRepo: Repository<ClientUser>,
+    @InjectRepository(PurchaseClientUser)
+    private purchaseRepo: Repository<PurchaseClientUser>,
     private userServices: UserService,
   ) {}
   create(userId: string, createCommerceDto: CreateCommercesDto) {
@@ -30,6 +33,18 @@ export class CommercesService {
       newCommerce.id = uuidv4();
 
       return this.commerceRepo.save(newCommerce);
+    } catch (error) {
+      console.error('Error creating new commerce:', error);
+      throw new Error('Failed to create new commerce');
+    }
+  }
+  async createPurchase(userId: string, createPurchaseDto: CreatePurchaseDto) {
+    try {
+      const newCommerce = this.findByUser(userId);
+      if (newCommerce) {
+        console.log(createPurchaseDto);
+        const newPurchase = this.purchaseRepo.create(createPurchaseDto);
+      }
     } catch (error) {
       console.error('Error creating new commerce:', error);
       throw new Error('Failed to create new commerce');

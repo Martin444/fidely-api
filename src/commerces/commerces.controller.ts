@@ -16,6 +16,7 @@ import {
 } from './dto/create-commerce.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.gards';
 import { ApiTags } from '@nestjs/swagger';
+import { CreatePurchaseDto } from './dto/create_purchase.dto';
 
 @ApiTags('Commerces')
 @Controller('commerces')
@@ -37,6 +38,17 @@ export class CommercesController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.commercesService.findOne(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/purchase')
+  createPurchase(
+    @Req() req: Request,
+    @Body() createpurchaseDto: CreatePurchaseDto,
+  ) {
+    const userId = req['user']['userId'];
+    console.log(createpurchaseDto);
+    return this.commercesService.createPurchase(userId, createpurchaseDto);
   }
   @UseGuards(JwtAuthGuard)
   @Patch('/update')

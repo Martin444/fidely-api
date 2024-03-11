@@ -30,6 +30,11 @@ export class UserController {
     console.log(req['user']['userId']);
     return this.userService.findOne(req['user']['userId']);
   }
+
+  @Get('/user/:id')
+  async getProfileUser(@Param('id') id: string) {
+    return this.userService.findOne(id);
+  }
   @Post('admin/:email')
   async getAdminUseremail(@Param('email') email: string) {
     return this.userService.getadminUser(email);

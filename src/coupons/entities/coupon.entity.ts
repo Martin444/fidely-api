@@ -17,41 +17,42 @@ export class Coupon {
   ownerCommerceID: string;
 
   @Column({ type: 'varchar', length: 255 })
-  categoryId: string;
+  title: string;
 
   @Column({ type: 'varchar', length: 255 })
   photoURL: string;
 
   @Column({ type: 'varchar', length: 255 })
-  title: string;
+  description: string;
 
   @IsOptional()
   @Column({ type: 'varchar', length: 255 })
-  description: string;
+  type: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  email: string;
+  @Column({ nullable: true })
+  percentage: number;
 
-  @Column({ type: 'boolean', default: false })
-  emailValidate: boolean;
+  @Column({ nullable: true })
+  amount: number;
 
-  @Column({ type: 'varchar', length: 255 })
-  web: string;
-
-  @Column({ type: 'varchar', length: 255 })
-  phone: string;
-
-  @Exclude()
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  validateFile: string;
-
-  @Column({ type: 'varchar', length: 100 })
-  businessType: string;
-
-  @CreateDateColumn({
+  @Column({
+    name: 'expiry_date',
+    nullable: true,
     type: 'timestamptz',
   })
-  dateExpiration: Date;
+  expiryDate: Date;
+
+  @Column({ name: 'min_purchase_amount' })
+  minPurchaseAmount: number;
+
+  @Column({ name: 'max_usage_count' })
+  maxUsageCount: number;
+
+  @Column('varchar', { array: true, nullable: true })
+  applicableProducts: string[];
+
+  @Column('varchar', { array: true, nullable: true })
+  eligibleUsers: string[];
 
   @CreateDateColumn({
     type: 'timestamptz',
