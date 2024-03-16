@@ -16,7 +16,7 @@ export class CouponsService {
     const newCupon = this.cuponRepo.create(createCouponDto);
     console.log(createCouponDto);
     newCupon.id = uuidv4();
-    const commerce = await this.commerceServices.findByUser(userID);
+    const commerce = await this.commerceServices.findByCommerceUser(userID);
     if (commerce) {
       console.log(commerce);
       newCupon.ownerCommerceID = commerce.id;
@@ -34,7 +34,7 @@ export class CouponsService {
   }
 
   async findAllbyOwner(ownerId: string) {
-    const commerce = await this.commerceServices.findByUser(ownerId);
+    const commerce = await this.commerceServices.findByCommerceUser(ownerId);
     if (commerce) {
       const coupons = await this.findAllbyCommerce(commerce.id);
       return coupons;

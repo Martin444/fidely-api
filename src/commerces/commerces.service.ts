@@ -40,13 +40,35 @@ export class CommercesService {
   }
   async createPurchase(userId: string, createPurchaseDto: CreatePurchaseDto) {
     try {
-      const newCommerce = this.findByUser(userId);
+      const newCommerce = await this.findByCommerceUser(userId);
       if (newCommerce) {
-        console.log(createPurchaseDto);
         const newPurchase = this.purchaseRepo.create(createPurchaseDto);
+        newPurchase.id = uuidv4();
+        newPurchase.ownerCommerce = newCommerce.id;
+        console.log(newPurchase);
+        return await this.purchaseRepo.save(newPurchase);
       }
     } catch (error) {
       console.error('Error creating new commerce:', error);
+      throw new Error('Failed to create new commerce');
+    }
+  }
+
+  async findPurchaseForClientBycommerce(
+    userCommerceId: string,
+    clientId: string,
+  ) {
+    try {
+      const commerceOwn = await this.findByCommerceUser(userCommerceId);
+
+      if (commerceOwn) {
+        const purchases = await this.purchaseRepo.find({
+          where: { ownerCommerce: commerceOwn.id, clientId: clientId },
+        });
+        console.log(purchases);
+        return purchases;
+      }
+    } catch (error) {
       throw new Error('Failed to create new commerce');
     }
   }
@@ -64,7 +86,7 @@ export class CommercesService {
     return comerce;
   }
 
-  async findByUser(id: string) {
+  async findByCommerceUser(id: string) {
     const comerce = await this.commerceRepo.findOne({ where: { ownerID: id } });
     if (!comerce) {
       throw new NotFoundException(`Commerce #${id} not found`);
@@ -74,7 +96,7 @@ export class CommercesService {
 
   async addClient(ownerCommerce: string, clientID: string) {
     try {
-      const commerceID = await this.findByUser(ownerCommerce);
+      const commerceID = await this.findByCommerceUser(ownerCommerce);
       if (commerceID) {
         const clientListExist = await this.clientRepo.findOne({
           where: { ownerCommerce: commerceID.id },
@@ -114,7 +136,7 @@ export class CommercesService {
   }
 
   async getClientsByOwner(ownerID: string) {
-    const commerceMyList = await this.findByUser(ownerID);
+    const commerceMyList = await this.findByCommerceUser(ownerID);
     if (commerceMyList) {
       const clientListExist = await this.clientRepo.findOne({
         where: { ownerCommerce: commerceMyList.id },

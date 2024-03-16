@@ -13,6 +13,7 @@ export class CreatePurchaseDto {
   @IsNumber()
   @ApiProperty({
     description: 'total Amount',
+    type: Number,
   })
   readonly amount: number;
 }

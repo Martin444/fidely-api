@@ -20,7 +20,7 @@ export class PurchaseClientUser {
   @Column('varchar', { nullable: true })
   description: string;
 
-  @Column('varchar', { nullable: false })
+  @Column({ nullable: false, type: Number })
   amount: number;
 
   @CreateDateColumn({

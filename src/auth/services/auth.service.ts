@@ -42,7 +42,7 @@ export class AuthService {
       sub: user['user']['id'],
     };
     try {
-      const comerceOfUser = await this.commerceServices.findByUser(
+      const comerceOfUser = await this.commerceServices.findByCommerceUser(
         user['user']['id'],
       );
       if (comerceOfUser != null) {

@@ -47,8 +47,17 @@ export class CommercesController {
     @Body() createpurchaseDto: CreatePurchaseDto,
   ) {
     const userId = req['user']['userId'];
-    console.log(createpurchaseDto);
     return this.commercesService.createPurchase(userId, createpurchaseDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/findpurchases/:clientID')
+  findPurchases(@Req() req: Request, @Param('clientID') clientId: string) {
+    const userId = req['user']['userId'];
+    return this.commercesService.findPurchaseForClientBycommerce(
+      userId,
+      clientId,
+    );
   }
   @UseGuards(JwtAuthGuard)
   @Patch('/update')
