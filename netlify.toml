@@ -1,3 +1,2 @@
 [build]
   command = "docker-compose up -d && npm install -g @nestjs/cli && npm run build"
-  publish = "dist"
