@@ -11,6 +11,7 @@ import { Client } from 'pg';
       inject: [config.KEY],
       useFactory: (configService: ConfigType<typeof config>) => {
         try {
+          console.info(`Se conecta a ${process.env.DYNO}`);
           if (process.env.DYNO == 'web.1') {
             return {
               type: 'postgres',
@@ -29,7 +30,7 @@ import { Client } from 'pg';
               host: configService.postgres.host,
               synchronize: true,
               autoLoadEntities: true,
-              ssl: false,
+              ssl: true,
             };
           }
         } catch (e) {
@@ -64,7 +65,7 @@ import { Client } from 'pg';
               password: configService.postgres.password,
               user: configService.postgres.user,
               host: configService.postgres.host,
-              ssl: false,
+              ssl: true,
             });
             client.connect();
             return client;
