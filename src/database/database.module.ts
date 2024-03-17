@@ -21,6 +21,8 @@ import { Client } from 'pg';
               ssl: { rejectUnauthorized: false },
             };
           } else {
+            console.info(`con ${configService.postgres}`);
+            console.info(`con ${configService.postgres.user}`);
             return {
               type: 'postgres',
               database: configService.postgres.dbName,
@@ -46,7 +48,10 @@ import { Client } from 'pg';
       provide: 'DATABASE_CONNECTION',
       useFactory: (configService: ConfigType<typeof config>) => {
         try {
+          console.info(`Se conectó DB1 ${process.env.DYNO}`);
           if (process.env.DYNO == 'web.1') {
+            console.info(`sin ${configService.postgres}`);
+            console.info(`con ${configService.postgresUrl}`);
             const client = new Client({
               connectionString: configService.postgresUrl,
               // database: configService.postgres.dbName,
@@ -59,6 +64,8 @@ import { Client } from 'pg';
             client.connect();
             return client;
           } else {
+            console.info(`con ${configService.postgres}`);
+            console.info(`con ${configService.postgres.user}`);
             const client = new Client({
               database: configService.postgres.dbName,
               port: configService.postgres.port,
