@@ -32,7 +32,7 @@ import { Client } from 'pg';
               host: configService.postgres.host,
               synchronize: true,
               autoLoadEntities: true,
-              ssl: true,
+              ssl: false,
             };
           }
         } catch (e) {
@@ -72,7 +72,7 @@ import { Client } from 'pg';
               password: configService.postgres.password,
               user: configService.postgres.user,
               host: configService.postgres.host,
-              ssl: true,
+              ssl: false,
             });
             client.connect();
             return client;
